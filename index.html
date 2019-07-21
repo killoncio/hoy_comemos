@@ -56,6 +56,7 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 		<li role="presentation"><a href="#" data-type="especial">Especial</a></li>
 		<li role="presentation"><a href="#" data-type="postre">Postre</a></li>
 		<li role="presentation"><a href="#" data-type="add"> + </a></li>
+		<li role="presentation"><a href="#" data-type="new"> Nuevas </a></li>
 		<li role="presentation"><a href="#" data-type="lista">Lista</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -99,7 +100,7 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 
 	<script id="receipt_template" type="x-tmpl-mustache">
 		{{#receipts}}
-		<li class='receipt' data-category={{ category }} draggable="true">
+		<li class='receipt {{#is_new}}receipt_new{{/is_new}}' data-category={{ category }} draggable="true">
 			<div class="receipt_name">
 				{{ name }}
 				{{#ingredients}}

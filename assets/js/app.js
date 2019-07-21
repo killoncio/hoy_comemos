@@ -82,6 +82,8 @@ var toggleType = function(e) {
 		receipts.toggleClass('hide', type !== "todo");
 		addForm.toggleClass('hide', type !== "add");
 		purchaseListWrapper.toggleClass('hide', type !== "lista");
+	} else if (type === "new") {
+		receipts.addClass('hide').filter(".receipt_new").removeClass('hide');
 	} else {
 		receipts.addClass('hide').filter("[data-category=" + type + "]").removeClass('hide');
 	}
