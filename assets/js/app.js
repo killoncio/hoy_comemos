@@ -15,7 +15,7 @@ function createImageName(receipts) {
 
 	for (var i=0; i < receipts.length; i++) {
 		var receipt = receipts[i];
-		var image_name = receipt.name;
+		var image_name = receipt.name.toLowerCase();
 		var re;
 		for (var j=0; j < wordsToReplace.length;j++) {
 			re = new RegExp(wordsToReplace[j], "g");
