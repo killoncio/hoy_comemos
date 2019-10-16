@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+  <title>My first Vue app</title>
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  
+  <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/custom.css">
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body id="body" data-spy="scroll" data-target=".one-page-header" class="demo-lightbox-gallery">
+  <section id="productos" class="about-section section-first">
+    <div class="container content-lg">
+      <div class="row">
+        <div class="content-boxes-v6 md-margin-bottom-50">
+          <div id="receipt-list">
+            <receipt-item
+              v-for="receipt in receipts"
+              v-bind:receipt="receipt"
+              v-bind:key="receipt.id"
+            ></receipt-item>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script type="text/javascript" src="assets/js/app_vue.js"></script>
+</body>
+</html>
