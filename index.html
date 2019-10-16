@@ -100,14 +100,17 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 
 	<script id="receipt_template" type="x-tmpl-mustache">
 		{{#receipts}}
-		<li class='receipt {{#is_new}}receipt_new{{/is_new}}' data-category={{ category }} draggable="true">
+		<li id={{ id }} class='receipt {{#is_new}}receipt_new{{/is_new}}' data-category={{ category }} draggable="true">
 			<div class="receipt_name">
 				{{ name }}
 				{{#ingredients}}
 				<span class="ingredients_trigger">-i-</span>
 				{{/ingredients}}
 				{{#link}}
-				<span><a href={{ link }} target='_blank'>+</a></span>
+				<span><a href={{ link }} target='_blank'>></a></span>
+				{{/link}}
+				{{^link}}
+				<span><a href="#" class="url_set">+</a></span>
 				{{/link}}
 				{{#is_new}}
 				<span class="label label-success">New!</span>

@@ -177,12 +177,38 @@ function addIngredientsToPurchaseList(event) {
 	purchaseListWrapper.html(rendered);
 }
 
+function promptUrlField(event) {
+	event.preventDefault();
+	var url = prompt("introduce la url de la receta");
+	var id = $(event.target).closest('.receipt').attr('id');
+
+	if (url != null) { // I should check whether is a correct url and prevent injection attacks
+		saveUrl(id,url);
+	}
+}
+
+function saveUrl(id, url) {
+    $.ajax({
+        url: 'save_url.php',
+        method: 'POST',
+        data:{
+        	id: id,
+        	link: url
+        }
+    }).done(function(data){
+    	// todo: show success or error message
+    	// todo: change icon 
+		console.log("url " + url + " saved in id " + id);
+    });
+}
+
 function attachEvents() {
 	$('#receipt_list')
 		.on('touchstart', '.receipt', onTouchStart)
 		.on('touchmove', '.receipt', onTouchMove)
 		.on('touchend', '.receipt', onTouchEnd)
-		.on('click', '.ingredients_trigger', showIngredients);
+		.on('click', '.ingredients_trigger', showIngredients)
+		.on('click', '.url_set', promptUrlField);
 
 	$('ul.task_list').on('click','.task', toggleTask);
 
