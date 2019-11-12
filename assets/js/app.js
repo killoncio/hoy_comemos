@@ -64,6 +64,8 @@ var data = [
 		{"id": 19, "nombre":"puchero", "category":"guiso"}
 	];
 
+var daylyCategory=["pasta","pescado","guiso","verduras","pizza","pasta","carne"];
+
 var toggleTask = function(){
 	$(this).toggleClass('done');
 }
@@ -82,6 +84,9 @@ var toggleType = function(e) {
 		receipts.toggleClass('hide', type !== "todo");
 		addForm.toggleClass('hide', type !== "add");
 		purchaseListWrapper.toggleClass('hide', type !== "lista");
+	} else if (type === "weekly_menu") {
+		var category = daylyCategory[0];
+		receipts.addClass('hide').filter("[data-category=" + category + "]").removeClass('hide');
 	} else if (type === "new") {
 		receipts.addClass('hide').filter(".receipt_new").removeClass('hide');
 	} else {
