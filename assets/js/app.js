@@ -64,7 +64,28 @@ var data = [
 		{"id": 19, "nombre":"puchero", "category":"guiso"}
 	];
 
-var daylyCategory=["pasta","pescado","guiso","verduras","pizza","pasta","carne"];
+var weeklyMenu = {
+	daylyCategory: ["pasta","pescado","guiso","verduras","pizza","pasta","carne"],
+	menuIds: [],
+	dayIndex: 0,
+	onSelect: function(e) {
+		var id = $(e.target).closest('.receipt').attr('id');
+		this.set(id);
+
+		if (this.dayIndex < this.daylyCategory.length - 1) { 
+			// show next day/category to choose meal
+			this.dayIndex++;
+			var category = this.daylyCategory[this.dayIndex];
+			receipts.addClass('hide').filter("[data-category=" + category + "]").removeClass('hide');
+		} else {
+			// show weekly menu selected
+			receipts.addClass('hide').filter(function(index, element) { return weeklyMenu.menuIds.indexOf($(this).attr('id')) > -1 }).removeClass('hide');
+		}
+	},
+	set: function(mealId) {
+		this.menuIds.push(mealId);
+	}
+}
 
 var toggleTask = function(){
 	$(this).toggleClass('done');
@@ -85,7 +106,7 @@ var toggleType = function(e) {
 		addForm.toggleClass('hide', type !== "add");
 		purchaseListWrapper.toggleClass('hide', type !== "lista");
 	} else if (type === "weekly_menu") {
-		var category = daylyCategory[0];
+		var category = weeklyMenu.daylyCategory[weeklyMenu.dayIndex];
 		receipts.addClass('hide').filter("[data-category=" + category + "]").removeClass('hide');
 	} else if (type === "new") {
 		receipts.addClass('hide').filter(".receipt_new").removeClass('hide');
@@ -213,7 +234,8 @@ function attachEvents() {
 		.on('touchmove', '.receipt', onTouchMove)
 		.on('touchend', '.receipt', onTouchEnd)
 		.on('click', '.ingredients_trigger', showIngredients)
-		.on('click', '.url_set', promptUrlField);
+		.on('click', '.url_set', promptUrlField)
+		.on('click', '.choose_receipt', weeklyMenu.onSelect.bind(weeklyMenu));
 
 	$('ul.task_list').on('click','.task', toggleTask);
 

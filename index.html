@@ -117,9 +117,10 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 				<span class="label label-success">New!</span>
 				{{/is_new}}
 			</div>
-			<div class='receipt_image img-wrapper'>
+			<div class='receipt_image img-wrapper'style="position: relative">
 				<img class='img-responsive' src='assets/img/{{ image }}.jpg'
 					onerror="this.onerror=null;this.src='assets/img/placeholder.jpg';">
+				<div class="choose_receipt" style="position: absolute;right: 5px;bottom: 5px;width: 30px;height: 30px;background-color:green;"></div>
 			</div>
 			<div class="receipt_ingredients hide">
 				{{ ingredients }}
