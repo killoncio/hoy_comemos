@@ -93,16 +93,22 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 
 					<div id="purchase_text" class="hide">
 					</div>
+
+					<div id="weekly_menu_wrapper">
+					</div>
 				</div>
 			</div>
 		</div>
 
 	</section>
 
-	<script id="receipt_template" type="x-tmpl-mustache">
+	<script id="meals_list_template" type="x-tmpl-mustache">
 		{{#receipts}}
 		<li id={{ id }} class='receipt {{#is_new}}receipt_new{{/is_new}}' data-category={{ category }} draggable="true">
 			<div class="receipt_name">
+				{{#day}}
+				<span>{{ day }}: </span>
+				{{/day}}
 				{{ name }}
 				{{#ingredients}}
 				<span class="ingredients_trigger">-i-</span>
@@ -120,10 +126,30 @@ The data-spy and data-target are part of the built-in Bootstrap scrollspy functi
 			<div class='receipt_image img-wrapper'style="position: relative">
 				<img class='img-responsive' src='assets/img/{{ image }}.jpg'
 					onerror="this.onerror=null;this.src='assets/img/placeholder.jpg';">
-				<div class="choose_receipt" style="position: absolute;right: 5px;bottom: 5px;width: 30px;height: 30px;background-color:green;"></div>
 			</div>
 			<div class="receipt_ingredients hide">
 				{{ ingredients }}
+			</div>
+		</li>
+		{{/receipts}}
+	</script>
+
+	<script id="choose_weekly_menu_template" type="x-tmpl-mustache">
+		{{#receipts}}
+		<li id={{ id }} class='receipt {{#is_new}}receipt_new{{/is_new}}' data-category={{ category }} draggable="true">
+			<div class="receipt_name">
+				{{ name }}
+				{{^link}}
+				<span><a href="#" class="url_set">+</a></span>
+				{{/link}}
+				{{#is_new}}
+				<span class="label label-success">New!</span>
+				{{/is_new}}
+			</div>
+			<div class='receipt_image img-wrapper'style="position: relative">
+				<img class='img-responsive' src='assets/img/{{ image }}.jpg'
+					onerror="this.onerror=null;this.src='assets/img/placeholder.jpg';">
+				<div class="choose_receipt" style="position: absolute;right: 5px;bottom: 5px;width: 30px;height: 30px;background-color:green;"></div>
 			</div>
 		</li>
 		{{/receipts}}

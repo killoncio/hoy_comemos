@@ -2,11 +2,12 @@ var receipts =  $('.receipt');
 var addForm = $('#addRecetaForm');
 var purchaseListWrapper = $('#purchase_text');
 var purchaseList = '';
+var chooseWeeklyMenuTemplate = $('#choose_weekly_menu_template').html();
+var mealsListTemplate = $('#meals_list_template').html();
 
-function renderList(receipts) {
-	var template = $('#receipt_template').html();
+function render(template, dataObject) {
 	Mustache.parse(template);   // optional, speeds up future uses
-	var rendered = Mustache.render(template, receipts);
+	var rendered = Mustache.render(template, dataObject);
 	$('#receipt_list').html(rendered);
 }
 
@@ -41,7 +42,7 @@ function loadMealsList() {
         dataType:'json'
     }).done(function(data){
     	mealsData = createImageName(data);
-        renderList({'receipts': mealsData});
+        render(mealsListTemplate, {'receipts': mealsData});
     });
 }
 
@@ -49,38 +50,48 @@ function loadMealsList() {
 
 var weeklyMenu = {
 	daylyCategory: ["pasta","pescado","guiso","verduras","pizza","pasta","carne"],
+	day: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
 	menuIds: [],
 	dayIndex: 0,
+	init: function() {
+		this.render();
+	},
 	onSelect: function(e) {
 		var id = $(e.target).closest('.receipt').attr('id');
 		this.set(id);
+		this.dayIndex++;
 
-		if (this.dayIndex < this.daylyCategory.length - 1) { 
+		if (this.dayIndex < this.daylyCategory.length) { 
 			// show next day/category to choose meal
-			this.dayIndex++;
-			var category = this.daylyCategory[this.dayIndex];
-			receipts.addClass('hide').filter("[data-category=" + category + "]").removeClass('hide');
+			this.render();
 		} else {
 			// show weekly menu selected
-			receipts.addClass('hide').filter(function(index, element) { return weeklyMenu.menuIds.indexOf($(this).attr('id')) > -1 }).removeClass('hide');
+			var meals = mealsData.filter(function(meal) { return weeklyMenu.menuIds.indexOf(meal.id) > -1 });
+			var sortedMealsByDay = [];
+			$(meals).each(function(index, meal){
+				var index = weeklyMenu.menuIds.indexOf(meal.id);
+				meal.day = weeklyMenu.day[index];
+				sortedMealsByDay[index] = meal;
+			});
+			render(mealsListTemplate, {'receipts': sortedMealsByDay});
 		}
 	},
 	set: function(mealId) {
-		this.menuIds.push(mealId);
+		this.menuIds.push(parseInt(mealId));
+	},
+	render: function() {
+		var currentCategory = this.daylyCategory[this.dayIndex];
+		var meals = mealsData.filter(function(meal) {return meal.category === currentCategory});
+		render(chooseWeeklyMenuTemplate,{'receipts': meals});
 	}
 }
-
-var toggleTask = function(){
-	$(this).toggleClass('done');
-}
-
-var toggleType = function(e) {
+var renderView = function(e) {
 	var button = $(e.target);
 	var type = button.data('type');
 
 	if (receipts.length === 0) {
 		receipts = $('.receipt');
-	}
+	}	
 
 	button.closest('li').addClass('active').siblings('.active').removeClass('active');
 
@@ -89,8 +100,7 @@ var toggleType = function(e) {
 		addForm.toggleClass('hide', type !== "add");
 		purchaseListWrapper.toggleClass('hide', type !== "lista");
 	} else if (type === "weekly_menu") {
-		var category = weeklyMenu.daylyCategory[weeklyMenu.dayIndex];
-		receipts.addClass('hide').filter("[data-category=" + category + "]").removeClass('hide');
+		weeklyMenu.init();
 	} else if (type === "new") {
 		receipts.addClass('hide').filter(".receipt_new").removeClass('hide');
 	} else {
@@ -220,9 +230,7 @@ function attachEvents() {
 		.on('click', '.url_set', promptUrlField)
 		.on('click', '.choose_receipt', weeklyMenu.onSelect.bind(weeklyMenu));
 
-	$('ul.task_list').on('click','.task', toggleTask);
-
-	$('#type_selector').on('click','a', toggleType);
+	$('#type_selector').on('click','a', renderView);
 	$('#ingredients_text')
 		.on('click','.ingredients_close_button',hideIngredients)
 		.on('click','.ingredients_submit_button',addIngredientsToPurchaseList);
