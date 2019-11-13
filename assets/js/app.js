@@ -3,7 +3,7 @@ var addForm = $('#addRecetaForm');
 var purchaseListWrapper = $('#purchase_text');
 var purchaseList = '';
 
-function loadReceipts(receipts) {
+function renderList(receipts) {
 	var template = $('#receipt_template').html();
 	Mustache.parse(template);   // optional, speeds up future uses
 	var rendered = Mustache.render(template, receipts);
@@ -31,38 +31,21 @@ function createImageName(receipts) {
 	return receipts;
 }
 
-function fetchData() {
+// data structure: {"id": 1, "nombre":"pittige varkenhaas", "category":"carne"}
+var mealsData = [];
+
+function loadMealsList() {
     $.ajax({
         url: 'get_receipts.php',
         method: 'GET',
         dataType:'json'
     }).done(function(data){
-    	var receipts = createImageName(data);
-        loadReceipts({'receipts': receipts});
+    	mealsData = createImageName(data);
+        renderList({'receipts': mealsData});
     });
 }
 
-var data = [
-		{"id": 1, "nombre":"pittige varkenhaas", "category":"carne"},
-		{"id": 2, "nombre":"lentejas", "category":"guiso"},
-		{"id": 3, "nombre":"pasta con salmon", "category":"pasta"},
-		{"id": 4, "nombre":"pasta con pesto verde", "category":"pasta"},
-		{"id": 5, "nombre":"hamburguesas", "category":"carne"},
-		{"id": 6, "nombre":"lasagna", "category":"pasta"},
-		{"id": 7, "nombre":"tortilla de patata", "especial":"carne"},
-		{"id": 8, "nombre":"salmon", "category":"pescado"},
-		{"id": 9, "nombre":"pasta carbonara", "category":"pasta"},
-		{"id": 10, "nombre":"garbanzos con gambas", "category":"guiso"},
-		{"id": 11, "nombre":"kipsate", "category":"pasta"},
-		{"id": 12, "nombre":"garbanzos con pescado", "category":"guiso"},
-		{"id": 13, "nombre":"guisantes con pescado", "category":"guiso"},
-		{"id": 14, "nombre":"papas con carne", "category":"guiso"},
-		{"id": 15, "nombre":"garbanzos con chorizo", "category":"guiso"},
-		{"id": 16, "nombre":"risotto", "category":"pasta"},
-		{"id": 17, "nombre":"carbonara al curry", "category":"pasta"},
-		{"id": 18, "nombre":"arroz con pollo", "category":"pasta"},
-		{"id": 19, "nombre":"puchero", "category":"guiso"}
-	];
+
 
 var weeklyMenu = {
 	daylyCategory: ["pasta","pescado","guiso","verduras","pizza","pasta","carne"],
@@ -249,7 +232,7 @@ function init() {
 
 
 // createImageName();
-	fetchData();
+	loadMealsList();
 	attachEvents();
 }
 
