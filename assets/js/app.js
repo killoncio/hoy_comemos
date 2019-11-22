@@ -51,15 +51,26 @@ function loadMealsList() {
 var weeklyMenu = {
 	daylyCategory: ["pasta","pescado","guiso","verduras","pizza","pasta","carne"],
 	day: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
+	currentDate: new Date(),
 	menuIds: [],
 	dayIndex: 0,
+	selectedWeeklyMenu: [],
 	init: function() {
 		this.render();
+		this.setCurrentDateToMonday();
+	},
+	setCurrentDateToMonday: function() {
+		var day = this.currentDate.getDay();
+		while (day !==1) {
+			this.currentDate.setDate(this.currentDate.getDate() + 1);
+			day = this.currentDate.getDay();
+		}
 	},
 	onSelect: function(e) {
 		var id = $(e.target).closest('.receipt').attr('id');
-		this.set(id);
+		this.store(id);
 		this.dayIndex++;
+		this.currentDate.setDate(this.currentDate.getDate() + 1);
 
 		if (this.dayIndex < this.daylyCategory.length) { 
 			// show next day/category to choose meal
@@ -67,17 +78,39 @@ var weeklyMenu = {
 		} else {
 			// show weekly menu selected
 			var meals = mealsData.filter(function(meal) { return weeklyMenu.menuIds.indexOf(meal.id) > -1 });
-			var sortedMealsByDay = [];
+			// add day and sort by day
 			$(meals).each(function(index, meal){
 				var index = weeklyMenu.menuIds.indexOf(meal.id);
 				meal.day = weeklyMenu.day[index];
-				sortedMealsByDay[index] = meal;
+				weeklyMenu.selectedWeeklyMenu[index] = meal;
 			});
-			render(mealsListTemplate, {'receipts': sortedMealsByDay});
+			render(mealsListTemplate, {'receipts': weeklyMenu.selectedWeeklyMenu});
 		}
 	},
-	set: function(mealId) {
-		this.menuIds.push(parseInt(mealId));
+	getMeal: function(id) {
+		return mealsData.filter(function(meal) { return meal.id === parseInt(id) });
+	},
+	store: function(id) {
+		// save it locally to render final menu
+		this.menuIds.push(parseInt(id));
+
+		var meal = this.getMeal(id)[0];
+
+		var data = {
+			name : meal.name,
+			category: meal.category,
+			date: helper.getFormattedDay(this.currentDate)
+		}
+
+	    $.ajax({
+	        url: 'save_weekly_menu.php',
+	        method: 'POST',
+	        data: data
+	    }).done(function(data){
+	    	// todo: show success or error message
+	    	// todo: change icon 
+			console.log("done");
+	    });
 	},
 	render: function() {
 		var currentCategory = this.daylyCategory[this.dayIndex];
@@ -85,6 +118,7 @@ var weeklyMenu = {
 		render(chooseWeeklyMenuTemplate,{'receipts': meals});
 	}
 }
+
 var renderView = function(e) {
 	var button = $(e.target);
 	var type = button.data('type');
@@ -246,4 +280,19 @@ function init() {
 
 init();
 
+var helper = {
+	getFormattedDay: function(day) {
+		var dd = day.getDate();
+		var mm = day.getMonth() + 1; //January is 0!
+		var yyyy = day.getFullYear();
+		if (dd < 10) {
+		  dd = '0' + dd;
+		} 
+		if (mm < 10) {
+		  mm = '0' + mm;
+		} 
+		
+		return dd + '/' + mm + '/' + yyyy;
+	}
+}
 
